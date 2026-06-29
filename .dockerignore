@@ -1,0 +1,42 @@
+# Python
+backend/venv/
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.pytest_cache/
+backend/.deepeval/
+*.pyc
+*.pyo
+
+# Node
+frontend/node_modules/
+frontend/.next/
+frontend/test-results/
+frontend/playwright-report/
+
+# Git
+.git/
+.gitignore
+.kiro/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docs (not needed in container)
+docs/
+
+# Test files
+backend/test_*.py
+backend/tests/
+frontend/tests/
+
+# Local env files
+.env
+.env.example
+.env_example
+frontend/.env.local

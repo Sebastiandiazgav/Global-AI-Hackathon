@@ -1,0 +1,61 @@
+name: soporte_skill
+display_name: "Agente de Soporte y Catálogo"
+version: "1.0.0"
+description: >
+  Skill especializado en soporte operativo, recargas telefónicas, activación
+  de PINs digitales y consultas al catálogo de productos. Utiliza RAG para
+  responder preguntas basándose en manuales internos de Disashop.
+
+domain: soporte
+priority: medium
+
+capabilities:
+  - phone_recharges
+  - pin_activation
+  - knowledge_retrieval
+  - catalog_queries
+  - troubleshooting
+
+tools:
+  - procesar_recarga
+  - activar_pin_digital
+  - buscar_en_manuales
+  - consultar_catalogo_productos
+
+triggers:
+  keywords:
+    - recarga
+    - recargar
+    - PIN
+    - Netflix
+    - PlayStation
+    - Spotify
+    - Steam
+    - Xbox
+    - catálogo
+    - producto
+    - cómo
+    - ayuda
+    - problema
+    - incidencia
+    - error
+    - manual
+    - procedimiento
+
+context:
+  business_model: >
+    El tendero necesita acceso rápido a información sobre los más de 500
+    productos digitales del catálogo. Las recargas internacionales son
+    especialmente demandadas por comunidades extranjeras residentes.
+  
+  key_metrics:
+    - comision_recarga_nacional: "5%"
+    - comision_recarga_internacional: "8%"
+    - comision_pin_promedio: "1-2.50€"
+    - productos_totales: "500+"
+
+guardrails:
+  - confirm_before_processing_recharge
+  - use_rag_for_procedural_questions
+  - never_guess_procedures
+  - suggest_support_contact_when_unsure

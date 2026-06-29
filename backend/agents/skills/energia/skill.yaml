@@ -1,0 +1,52 @@
+name: energia_skill
+display_name: "Agente de Energía"
+version: "1.0.0"
+description: >
+  Skill especializado en servicios energéticos para el punto de venta Disashop.
+  Permite al tendero analizar facturas, comparar tarifas y gestionar cambios
+  de comercializadora para sus clientes.
+
+domain: energia
+priority: high
+
+capabilities:
+  - tariff_comparison
+  - savings_calculation
+  - contract_preparation
+  - market_analysis
+
+tools:
+  - calcular_ahorro_energetico
+  - preparar_contrato_energia
+  - consultar_tarifas_disponibles
+
+triggers:
+  keywords:
+    - factura
+    - luz
+    - energía
+    - tarifa
+    - kWh
+    - consumo
+    - ahorro
+    - comercializadora
+    - contrato
+    - eléctrica
+    - electricidad
+
+context:
+  business_model: >
+    El tendero actúa como asesor energético de confianza para vecinos del barrio.
+    Gana comisión (20-30€) por cada cambio de tarifa exitoso.
+  
+  key_metrics:
+    - comision_por_cambio: "20-30€"
+    - tiempo_efectivo_cambio: "21 días máximo"
+    - sin_penalizacion: true
+    - sin_corte_suministro: true
+
+guardrails:
+  - never_execute_without_confirmation
+  - always_show_savings_clearly
+  - mention_vendor_commission
+  - validate_consumption_range: [50, 2000]  # kWh reasonable range

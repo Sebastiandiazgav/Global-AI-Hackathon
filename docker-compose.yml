@@ -1,0 +1,84 @@
+version: '3.9'
+
+services:
+  # ============================================
+  # PostgreSQL Database
+  # ============================================
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: myagent-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: myagent
+      POSTGRES_PASSWORD: myagent_pass
+      POSTGRES_DB: myagent_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/database/init.sql:/docker-entrypoint-initdb.d/01-extensions.sql
+      - ./backend/database/schema.sql:/docker-entrypoint-initdb.d/02-schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myagent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - myagent-network
+
+  # ============================================
+  # Backend - FastAPI + LangGraph Multi-Agent
+  # ============================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: myagent-backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - DATABASE_URL=postgresql://myagent:myagent_pass@db:5432/myagent_db
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+    networks:
+      - myagent-network
+
+  # ============================================
+  # Frontend - Next.js Smart POS UI
+  # ============================================
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: myagent-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://43.98.164.203:8000
+      - NEXT_PUBLIC_SSE_URL=http://43.98.164.203:8000/api/stream
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - myagent-network
+
+volumes:
+  pgdata:
+
+networks:
+  myagent-network:
+    driver: bridge
+    name: myagent-network

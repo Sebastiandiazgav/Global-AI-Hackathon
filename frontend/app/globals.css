@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-disa-dark text-white antialiased;
+  }
+}
+
+@layer components {
+  .smart-pos-container {
+    @apply max-w-6xl mx-auto h-screen flex flex-col;
+  }
+
+  .chat-bubble-user {
+    @apply bg-disa-primary/20 border border-disa-primary/30 rounded-2xl rounded-br-sm px-4 py-3 max-w-[80%] ml-auto;
+  }
+
+  .chat-bubble-agent {
+    @apply bg-slate-800 border border-slate-700 rounded-2xl rounded-bl-sm px-4 py-3 max-w-[80%];
+  }
+
+  .workflow-step {
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm animate-slide-up;
+  }
+
+  .service-card {
+    @apply bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:border-disa-secondary/50 
+           transition-all duration-200 cursor-pointer hover:bg-slate-800;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Markdown rendering in chat bubbles */
+.prose-sm ul {
+  list-style-type: disc;
+  padding-left: 1.2em;
+}
+
+.prose-sm ol {
+  list-style-type: decimal;
+  padding-left: 1.2em;
+}
+
+.prose-sm code {
+  background: rgba(30, 41, 59, 0.8);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.prose-sm pre {
+  background: rgba(15, 23, 42, 0.9);
+  padding: 0.75em;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.prose-sm a {
+  text-decoration: underline;
+}
+
+.prose-sm hr {
+  border-color: rgba(71, 85, 105, 0.3);
+  margin: 0.5em 0;
+}

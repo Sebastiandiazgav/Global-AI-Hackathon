@@ -1,0 +1,57 @@
+name: logistica_skill
+display_name: "Agente de Logística"
+version: "1.0.0"
+description: >
+  Skill especializado en gestión de paquetería y logística de última milla.
+  Gestiona Amazon Hub Counter, GLS Point y SEUR Pickup desde el Smart POS.
+
+domain: logistica
+priority: high
+
+capabilities:
+  - package_reception
+  - delivery_confirmation
+  - return_management
+  - inventory_tracking
+  - bulk_scanning
+
+tools:
+  - registrar_paquetes
+  - confirmar_entrega_paquete
+  - consultar_estado_paquete
+  - gestionar_devolucion
+  - listar_paquetes_pendientes
+
+triggers:
+  keywords:
+    - paquete
+    - paquetes
+    - Amazon
+    - GLS
+    - SEUR
+    - entrega
+    - recogida
+    - devolución
+    - bulto
+    - transportista
+    - repartidor
+    - envío
+    - tracking
+    - PIN
+
+context:
+  business_model: >
+    El punto de venta funciona como HUB de recogida para e-commerce.
+    Genera tráfico peatonal y comisiones por cada paquete gestionado.
+  
+  key_metrics:
+    - comision_amazon: "0.30€/paquete"
+    - comision_gls: "0.25€/paquete"
+    - plazo_maximo: "7 días"
+    - verificacion: ["PIN", "DNI", "DNI Digital"]
+
+guardrails:
+  - confirm_quantity_before_registering
+  - alert_expiring_packages
+  - verify_identity_before_delivery
+  - never_deliver_without_verification
