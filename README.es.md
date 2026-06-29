@@ -56,25 +56,6 @@ Ver [docs/architecture-diagram.md](docs/architecture-diagram.md) para el código
 
 </details>
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│  FRONTEND (Next.js 14 + Tailwind) — Chat · Voz · Visión      │
-└─────────────────────────────┬────────────────────────────────┘
-                              │ SSE Streaming
-┌─────────────────────────────▼────────────────────────────────┐
-│  GUARDRAILS ─→ SUPERVISOR ─→ 7 AGENTES ─→ 20 HERRAMIENTAS MCP│
-│                                                              │
-│  ⚡Energía  📦Logística  💬Soporte  👁️Visual  📊Analytics  🏛️Society │
-│                                                              │
-│  Motor de Memoria (persistente) · PostgreSQL · pgvector (RAG)│
-└─────────────────────────────┬────────────────────────────────┘
-                              │
-          ┌───────────────────┼───────────────────┐
-          ▼                   ▼                   ▼
-    Qwen Cloud          PostgreSQL          LangSmith
-    (4 modelos)         (pgvector)          (trazas)
-```
-
 ---
 
 ## 🤖 Agentes
