@@ -45,6 +45,17 @@ Operaciones empresariales gestionando **+32,000 puntos de venta** con **+500 pro
 
 ## 🏗️ Arquitectura
 
+<p align="center">
+  <img src="docs/architecture.png" alt="Diagrama de Arquitectura MyAgent" width="100%"/>
+</p>
+
+<details>
+<summary>📐 Ver Diagrama Interactivo (Código Mermaid)</summary>
+
+Ver [docs/architecture-diagram.md](docs/architecture-diagram.md) para el código Mermaid completo que puedes pegar en [mermaid.live](https://mermaid.live).
+
+</details>
+
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │  FRONTEND (Next.js 14 + Tailwind) — Chat · Voz · Visión      │

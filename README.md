@@ -54,10 +54,14 @@ Enterprise operations managing **32,000+ points of sale** with **500+ digital pr
 
 ## 🏗️ Architecture
 
-<details>
-<summary>📐 View Full Architecture Diagram (Mermaid)</summary>
+<p align="center">
+  <img src="docs/architecture.png" alt="MyAgent Architecture Diagram" width="100%"/>
+</p>
 
-See [docs/architecture-diagram.md](docs/architecture-diagram.md) for the complete interactive diagram.
+<details>
+<summary>📐 View Interactive Architecture Diagram (Mermaid Code)</summary>
+
+See [docs/architecture-diagram.md](docs/architecture-diagram.md) for the complete Mermaid code you can paste into [mermaid.live](https://mermaid.live).
 
 </details>
 
