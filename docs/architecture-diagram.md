@@ -118,8 +118,10 @@ flowchart TD
     subgraph DATA["🗄️ DATA LAYER"]
         direction LR
         DB_PG["🐘 PostgreSQL 16<br/>+ pgvector<br/>Transactions · Analytics · Memories"]
+        DB_REDIS["⚡ Redis 7<br/>Session cache · Rate limiting<br/>Response cache"]
         DB_RAG["📚 RAG Knowledge Base<br/>Operational manuals<br/>Vector similarity search"]
         DB_REF["📋 Reference Data<br/>120+ products · 8 tariffs<br/>12 carriers · 13 countries"]
+        DB_OSS["📁 OSS (Object Storage)<br/>Image uploads · Documents<br/>Visual agent files"]
     end
 
     %% ============================================
@@ -130,6 +132,8 @@ flowchart TD
         ALI_VPC["🔒 VPC<br/>172.16.0.0/16<br/>Private Network"]
         ALI_SG["🛡️ Security Group<br/>Ports: 22 · 80 · 443<br/>3000 · 8000"]
         ALI_ECS["🖥️ ECS Instance<br/>2vCPU · 4GB RAM<br/>Ubuntu 24.04<br/>Docker Compose"]
+        ALI_OSS["📁 OSS Bucket<br/>myagent-hackaton-2026<br/>Image & Doc storage"]
+        ALI_SLS["📊 Log Service (SLS)<br/>myagent-logs<br/>Centralized logging"]
     end
 
     %% ============================================
@@ -137,16 +141,17 @@ flowchart TD
     %% ============================================
     subgraph EXTERNAL["🌐 EXTERNAL SERVICES"]
         direction LR
-        QWEN["🧠 Qwen Cloud<br/>DashScope API<br/>4 models"]
+        QWEN["🧠 Qwen Cloud<br/>DashScope API<br/>30+ models"]
         LANGSMITH["📈 LangSmith<br/>Traces · Monitoring<br/>Project: hackaton-enterprise"]
     end
 
-    subgraph QWEN_MODELS["Qwen Cloud Models"]
+    subgraph QWEN_MODELS["Qwen Cloud — Model Router (16 models/role)"]
         direction TB
-        QM1["qwen3.5-omni-plus<br/>Supervisor + Society"]
-        QM2["qwen3.5-omni-flash<br/>Agents (function calling)"]
-        QM3["qwen-vl-max<br/>Vision analysis"]
+        QM1["qwen3.6-flash / qwen3.6-plus<br/>Primary agents"]
+        QM2["qwen3.5-flash / qwen-flash / qwen-turbo<br/>Fallback chain"]
+        QM3["qwen-vl-max / qwen3-vl-plus<br/>Vision models"]
         QM4["text-embedding-v4<br/>RAG embeddings"]
+        QM5["deepseek-v4-flash / glm-5.2 / qwen-max<br/>Extended fallbacks"]
     end
 
     %% ============================================
@@ -189,19 +194,21 @@ flowchart TD
     MCP_A_BOX --> DB_PG
 
     %% Memory connections
-    MEM_SESSION --> MEM_PERSIST
+    MEM_SESSION --> DB_REDIS
     MEM_PERSIST --> DB_PG
 
     %% Backend to External
-    AGENTS -->|"LLM calls"| QWEN
+    AGENTS -->|"LLM calls<br/>(Model Router)"| QWEN
     A_VISUAL -->|"Multimodal"| QWEN
     SOCIETY -->|"10 LLM calls<br/>per debate"| QWEN
     ORCHESTRATION -.->|"Traces"| LANGSMITH
+    ORCHESTRATION -.->|"Logs"| ALI_SLS
     QWEN --> QWEN_MODELS
 
     %% Infrastructure
     BACKEND -->|"Runs on"| ALI_ECS
     DATA -->|"Docker volume"| ALI_ECS
+    DB_OSS -->|"Alibaba Cloud"| ALI_OSS
     ALI_ECS --> ALI_VPC
     ALI_VPC --> ALI_SG
 
@@ -230,9 +237,9 @@ flowchart TD
     class A_ENERGY,A_LOGISTICS,A_SUPPORT,A_VISUAL,A_ANALYTICS,SUPERVISOR agentStyle
     class S_SALES,S_MARKETING,S_OPS,S_FINANCE,S_MOD societyStyle
     class T_E1,T_E2,T_E3,T_L1,T_L2,T_L3,T_L4,T_L5,T_C1,T_C2,T_C3,T_C4,T_M1,T_M2,T_M3,T_M4,T_A1,T_A2,T_A3,T_A4 mcpStyle
-    class DB_PG,DB_RAG,DB_REF dataStyle
-    class ALI_VPC,ALI_SG,ALI_ECS cloudStyle
-    class QWEN,LANGSMITH,QM1,QM2,QM3,QM4 externalStyle
+    class DB_PG,DB_RAG,DB_REF,DB_REDIS,DB_OSS dataStyle
+    class ALI_VPC,ALI_SG,ALI_ECS,ALI_OSS,ALI_SLS cloudStyle
+    class QWEN,LANGSMITH,QM1,QM2,QM3,QM4,QM5 externalStyle
 ```
 
 ## Key Metrics
@@ -242,7 +249,8 @@ flowchart TD
 | Specialized Agents | 7 |
 | MCP Servers | 5 |
 | MCP Tools | 20 |
-| LLM Models | 4 |
+| LLM Models (failover chain) | 30+ |
 | Supported Languages | 7 |
 | Products in Catalog | 120+ |
+| Alibaba Cloud Services | 6 (ECS, VPC, OSS, SLS, Redis, Qwen Cloud) |
 | Hackathon Tracks | 3 (Autopilot + Memory + Society) |
