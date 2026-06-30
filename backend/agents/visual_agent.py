@@ -45,15 +45,10 @@ IMPORTANT:
 
 
 def get_visual_llm():
-    """Get the Qwen VL model for image analysis via Qwen Cloud."""
+    """Get the Qwen VL model for image analysis via Qwen Cloud with fallback."""
+    from agents.model_router import get_llm
     settings = get_settings()
-    return ChatOpenAI(
-        model=settings.vision_model,
-        base_url=settings.qwen_cloud_base_url,
-        api_key=settings.qwen_cloud_api_key,
-        temperature=0.2,
-        max_tokens=settings.agent_max_tokens,
-    )
+    return get_llm(role="vision", temperature=0.2, max_tokens=settings.agent_max_tokens)
 
 
 def _get_openai_client():

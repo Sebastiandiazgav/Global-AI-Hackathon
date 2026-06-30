@@ -61,13 +61,8 @@ async def classify_content(text: str) -> Dict:
         return {"action": "ALLOWED", "category": "SAFE", "reason": "short_message"}
 
     try:
-        llm = ChatOpenAI(
-            model=settings.agent_model,
-            base_url=settings.qwen_cloud_base_url,
-            api_key=settings.qwen_cloud_api_key,
-            temperature=0.0,
-            max_tokens=80,
-        )
+        from agents.model_router import get_llm
+        llm = get_llm(role="agent", temperature=0.0, max_tokens=80)
 
         response = await llm.ainvoke([
             SystemMessage(content=_CLASSIFICATION_PROMPT),

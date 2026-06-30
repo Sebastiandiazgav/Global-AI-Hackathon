@@ -17,15 +17,10 @@ from agents.prompts import get_supervisor_prompt
 
 
 def get_supervisor_llm():
-    """Initialize Qwen Cloud LLM for supervisor routing."""
+    """Initialize Qwen Cloud LLM for supervisor routing with automatic fallback."""
+    from agents.model_router import get_llm
     settings = get_settings()
-    return ChatOpenAI(
-        model=settings.supervisor_model,
-        base_url=settings.qwen_cloud_base_url,
-        api_key=settings.qwen_cloud_api_key,
-        temperature=0.1,
-        max_tokens=settings.supervisor_max_tokens,
-    )
+    return get_llm(role="supervisor", temperature=0.1, max_tokens=settings.supervisor_max_tokens)
 
 
 async def supervisor_node(state: AgentState) -> AgentState:
@@ -87,17 +82,43 @@ async def supervisor_node(state: AgentState) -> AgentState:
         HumanMessage(content=f"{history_context}Current message: {last_message.content}"),
     ]
 
-    response = await llm.ainvoke(
-        messages,
-        config={
-            "tags": ["myagent", "supervisor", "routing"],
-            "metadata": {
-                "trace_id": state.get("trace_id", ""),
-                "session_id": state.get("session_id", ""),
-                "node": "supervisor",
-            },
-        },
-    )
+    # Get routing decision with automatic fallback
+    from agents.model_router import get_available_model, mark_model_exhausted, MODEL_CHAINS
+    
+    response = None
+    for attempt in range(len(MODEL_CHAINS.get("supervisor", []))):
+        try:
+            llm = get_supervisor_llm()
+            response = await llm.ainvoke(
+                messages,
+                config={
+                    "tags": ["myagent", "supervisor", "routing"],
+                    "metadata": {
+                        "trace_id": state.get("trace_id", ""),
+                        "session_id": state.get("session_id", ""),
+                        "node": "supervisor",
+                    },
+                },
+            )
+            break  # Success
+        except Exception as e:
+            error_str = str(e).lower()
+            if any(kw in error_str for kw in ["quota", "exhausted", "freetieronly"]):
+                current_model = get_available_model("supervisor")
+                mark_model_exhausted(current_model)
+                continue
+            raise
+
+    if response is None:
+        # All models exhausted - return default routing
+        return {
+            **state,
+            "current_agent": "soporte",
+            "intent": "fallback - all models exhausted",
+            "confidence": 0.5,
+            "language": settings.default_language,
+            "workflow_events": state.get("workflow_events", []),
+        }
 
     # Parse the routing decision
     try:

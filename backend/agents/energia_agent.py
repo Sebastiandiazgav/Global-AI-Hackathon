@@ -14,6 +14,7 @@ from langchain_openai import ChatOpenAI
 from config import get_settings
 from agents.state import AgentState
 from agents.token_utils import compact_messages, compact_tool_result_for_llm
+from agents.model_router import ainvoke_with_retry
 from mcp_servers.client import get_mcp_client
 from database.reference_data import get_reference_dataset
 
@@ -202,15 +203,10 @@ def _extract_contract_fields(user_text: str) -> dict:
 
 
 def get_energia_llm():
-    """Get LLM configured for energy agent via Qwen Cloud."""
+    """Get LLM configured for energy agent via Qwen Cloud with fallback."""
+    from agents.model_router import get_llm
     settings = get_settings()
-    return ChatOpenAI(
-        model=settings.agent_model,
-        base_url=settings.qwen_cloud_base_url,
-        api_key=settings.qwen_cloud_api_key,
-        temperature=0.3,
-        max_tokens=settings.agent_max_tokens,
-    )
+    return get_llm(role="agent", temperature=0.3, max_tokens=settings.agent_max_tokens)
 
 
 async def energia_node(state: AgentState) -> AgentState:
@@ -253,8 +249,9 @@ async def energia_node(state: AgentState) -> AgentState:
         )
     )
 
-    response = await llm_with_tools.ainvoke(
-        messages,
+    response = await ainvoke_with_retry(
+        messages, role="agent", temperature=0.3,
+        max_tokens=settings.agent_max_tokens, tools=ENERGIA_TOOLS,
         config={
             "tags": ["myagent", "agent", "energia"],
             "metadata": {

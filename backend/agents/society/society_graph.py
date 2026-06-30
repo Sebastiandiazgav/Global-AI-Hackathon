@@ -33,27 +33,15 @@ from agents.persistent_memory import get_persistent_memory
 
 
 def _get_society_llm():
-    """Get LLM for society debate agents."""
-    settings = get_settings()
-    return ChatOpenAI(
-        model=settings.society_model,
-        base_url=settings.qwen_cloud_base_url,
-        api_key=settings.qwen_cloud_api_key,
-        temperature=0.6,
-        max_tokens=800,
-    )
+    """Get LLM for society debate agents with fallback."""
+    from agents.model_router import get_llm
+    return get_llm(role="society", temperature=0.6, max_tokens=800)
 
 
 def _get_moderator_llm():
-    """Get LLM for moderator (lower temperature for synthesis)."""
-    settings = get_settings()
-    return ChatOpenAI(
-        model=settings.society_model,
-        base_url=settings.qwen_cloud_base_url,
-        api_key=settings.qwen_cloud_api_key,
-        temperature=0.3,
-        max_tokens=1500,
-    )
+    """Get LLM for moderator with fallback."""
+    from agents.model_router import get_llm
+    return get_llm(role="society", temperature=0.3, max_tokens=1500)
 
 
 def _gather_business_context(session_id: str) -> str:

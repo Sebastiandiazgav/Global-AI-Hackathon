@@ -83,6 +83,9 @@ class Settings(BaseSettings):
     memory_session_ttl_minutes: int = Field(default=120, env="MEMORY_SESSION_TTL_MINUTES")
     memory_persistent_enabled: bool = Field(default=True, env="MEMORY_PERSISTENT_ENABLED")
 
+    # Redis (Alibaba Cloud Tair)
+    redis_url: str = Field(default="", env="REDIS_URL")
+
     # Multilingual
     default_language: str = Field(default="es", env="DEFAULT_LANGUAGE")
     supported_languages: str = Field(default="es,en,fr,pt,de,it,zh", env="SUPPORTED_LANGUAGES")

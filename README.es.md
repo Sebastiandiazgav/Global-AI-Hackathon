@@ -128,10 +128,20 @@ Desplegado en **Alibaba Cloud**:
 
 | Servicio | Uso |
 |----------|-----|
-| **ECS** (Elastic Compute Service) | Contenedores Docker (backend + frontend + PostgreSQL) |
+| **ECS** (Elastic Compute Service) | Contenedores Docker (backend + frontend + PostgreSQL + Redis) |
 | **VPC** (Virtual Private Cloud) | Red aislada (172.16.0.0/16) |
 | **Security Group** | Reglas de firewall (puertos 22, 80, 443, 3000, 8000) |
-| **Qwen Cloud** (Model Studio) | 4 modelos LLM (70M+ tokens capa gratuita) |
+| **OSS** (Object Storage Service) | Almacenamiento de imágenes del agente visual |
+| **Log Service (SLS)** | Logging centralizado estructurado |
+| **Qwen Cloud** (Model Studio) | 30+ modelos LLM con failover automático |
+
+### 🔄 Router Inteligente de Modelos
+
+MyAgent incluye un sistema de failover automático de modelos:
+- **16 modelos por rol** en cadena de prioridad
+- Si la cuota gratuita de un modelo se agota → cambia automáticamente al siguiente
+- Soporta 30+ modelos de Qwen Cloud (flash, plus, max, coder, deepseek, glm)
+- Cero tiempo de inactividad independientemente de los límites individuales
 
 ---
 

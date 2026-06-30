@@ -528,3 +528,14 @@ async def forget_memory(session_id: str, memory_id: str):
     store = get_persistent_memory()
     success = store.forget(session_id=session_id, memory_id=memory_id)
     return {"forgotten": success, "memory_id": memory_id}
+
+
+# ============================================
+# Model Router Status
+# ============================================
+
+@router.get("/models/status")
+async def model_router_status():
+    """Get current model availability and fallback status."""
+    from agents.model_router import get_model_status
+    return get_model_status()

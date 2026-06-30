@@ -28,10 +28,22 @@ async def lifespan(app: FastAPI):
 
     # Initialize database schema
     from database.connection import init_database, is_database_available, reset_availability_cache
-    reset_availability_cache()  # Reset so it re-checks after DB is ready
+    reset_availability_cache()
     db_ok = init_database()
     if db_ok:
-        reset_availability_cache()  # Reset again so the store picks up the connection
+        reset_availability_cache()
+
+    # Initialize Redis cache
+    from database.redis_cache import is_redis_available
+    redis_ok = is_redis_available()
+
+    # Initialize OSS storage
+    from database.oss_storage import is_oss_available
+    oss_ok = is_oss_available()
+
+    # Initialize Log Service
+    from observability.sls_logger import is_sls_available
+    sls_ok = is_sls_available()
 
     # Configure LangSmith observability
     langsmith_status = configure_langsmith()
